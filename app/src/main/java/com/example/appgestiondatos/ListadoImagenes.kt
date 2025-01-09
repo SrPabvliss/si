@@ -1,5 +1,6 @@
 package com.example.appgestiondatos
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.widget.Adapter
 import androidx.activity.enableEdgeToEdge
@@ -7,7 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.appgestiondatos.databinding.ActivityListadoImagenesBinding
+import com.example.appgestiondatos.databinding.DialogPokemonBinding
 import com.example.appgestiondatos.model.Pokemon
+import com.squareup.picasso.Picasso
 
 class ListadoImagenes : AppCompatActivity() {
 
@@ -33,10 +36,34 @@ class ListadoImagenes : AppCompatActivity() {
 
     configureAdapter()
     loadData()
+    handleEvents()
   }
 
   private fun configureAdapter () {
     binding.rlvName.adapter = adapter
+  }
+
+  private fun handleEvents () {
+    adapter.setOnClickPokemon = { pokemon ->
+      val dialogBinding = DialogPokemonBinding.inflate(layoutInflater)
+      val dialog = AlertDialog.Builder(this)
+        .setView(dialogBinding.root)
+        .create()
+
+      dialogBinding.txtPokemonName.text = pokemon.nombre
+
+      Picasso.get()
+        .load(pokemon.url)
+        .placeholder(R.drawable.ic_launcher_background)
+        .error(R.drawable.ic_launcher_background)
+        .into(dialogBinding.imgPokemon)
+
+      dialog.show()
+
+      dialogBinding.root.setOnClickListener {
+        dialog.dismiss()
+      }
+    }
   }
 
   private fun loadData(){
